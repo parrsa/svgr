@@ -1,36 +1,89 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Next.js 16 + SVGR Starter
 
-## Getting Started
+This is a [Next.js](https://nextjs.org) 16 project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app) and configured to use **SVGR** for converting SVGs into React components.  
+Package manager used: **pnpm**.
 
-First, run the development server:
+---
 
+## 🚀 Getting Started
+
+### 1. Install dependencies
 ```bash
-npm run dev
-# or
-yarn dev
-# or
+pnpm install
+2. Run the development server
+bash
+Copy code
 pnpm dev
-# or
-bun dev
-```
+Open http://localhost:3000 in your browser.
+The page auto-updates as you edit files in the app directory.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+Note: Because we are using Turbopack in Next.js 16, we need to explicitly run Webpack in scripts:
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+json
+Copy code
+"scripts": {
+  "dev": "next dev --webpack",
+  "build": "next build --webpack",
+  "start": "next start",
+  "lint": "eslint"
+}
+🖌 Using Fonts
+This project uses next/font to automatically optimize and load Geist, a font from Vercel.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+🛠 Converting SVGs to React Components
+This project uses SVGR to convert SVG files into React components.
 
-## Learn More
+Install SVGR
+bash
+Copy code
+pnpm add -D @svgr/webpack
+Convert SVG files to React components
+bash
+Copy code
+pnpm dlx @svgr/cli --out-dir src/components/icons/variants src/components/icons/raw
+src/components/icons/raw → contains original SVG files
 
-To learn more about Next.js, take a look at the following resources:
+src/components/icons/variants → generated React components
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+Configure Webpack for Next.js 16
+In next.config.js:
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+ts
+Copy code
+/** @type {import('next').NextConfig} */
+const nextConfig = {
+  webpack(config) {
+    config.module.rules.push({
+      test: /\.svg$/,
+      use: ["@svgr/webpack"],
+    });
+    return config;
+  },
+};
 
-## Deploy on Vercel
+module.exports = nextConfig;
+This allows you to import SVGs as React components:
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+ts
+Copy code
+import  Icon from "../icons/Icon";;
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+ <Icon style="filled" name="dashboard" size={48} className="text-blue-500" />
+📚 Learn More
+Next.js Documentation – learn about Next.js features and API.
+
+Learn Next.js – interactive Next.js tutorial.
+
+SVGR Documentation – convert SVG to React components.
+
+🚀 Deployment
+The easiest way to deploy this Next.js app is with Vercel.
+
+Check out Next.js deployment docs for more info.
+
+💡 Notes
+All SVGs are kept in src/components/icons/raw (originals) and converted to src/components/icons/variants.
+
+PNPM is used as the package manager, but you can replace it with npm or yarn if needed.
+
+Make sure to commit both raw and variants folders if you want SVGs version-controlled in Git.
